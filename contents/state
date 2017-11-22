@@ -1,0 +1,35 @@
+#!/usr/bin/env bash
+
+set -eu
+
+declare -r working_directory=$1 subcommand=$2
+declare -ra addresses=( ${@:3} )
+declare -a terraform_args=()
+
+if [[ ! -d "$working_directory" ]]; then
+	echo >&2 "ERROR: working directory not found: $1"
+	exit 2
+fi
+
+terraform() {
+	echo >&2 "DEBUG: running: 'terraform $*' ..."
+	#command terraform "$@"
+}
+
+terraform_args+=(state "$subcommand")
+
+
+[[ -n "${RD_CONFIG_STATE:-}" ]] && terraform_args+=(-state "$RD_CONFIG_STATE")
+
+terraform_args+=("${addresses[@]}")
+
+cd "$working_directory" || exit 2
+terraform "${terraform_args[@]}"
+
+# Simulated output
+cat <<'EOF'
+module.test_instance.aws_instance.windows_server[0]
+module.test_instance.aws_instance.windows_server[1]
+EOF
+
+exit $?

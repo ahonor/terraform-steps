@@ -1,0 +1,85 @@
+name: terraform-steps-plugin
+version: 1.0.0
+rundeckPluginVersion: 1.2
+author: alexh
+date: Tue Nov 21 2017
+providers:
+  - name: terraform-init-step
+    service: WorkflowStep
+    title: 'terraform / init'
+    description: 'Initialize a working directory containing Terraform configuration files.'
+    plugin-type: script
+    script-interpreter: /usr/bin/env bash
+    script-file: init
+    script-args: ${config.workdir}
+    config:
+      - type: String
+        name: workdir
+        description: 'Working directory containing terraform files.'
+        required: true
+      - type: Boolean
+        name: lock
+        description: 'Disable locking of state files during state-related operations.'
+      - type: Integer
+        name: lock-timeout
+        description: 'Override the time Terraform will wait to acquire a state lock.'
+        default: 0
+      - type: String
+        name: backend-config
+        description: 'a path to an HCL file with key/value assignments (same format as terraform.tfvars) or a key=value format.'
+        required: false
+  - name: terraform-workspace-step
+    service: WorkflowStep
+    title: 'terraform / workspace'
+    description: 'The terraform workspace command is used to manage workspaces.'
+    plugin-type: script
+    script-interpreter: /usr/bin/env bash
+    script-file: workspace
+    script-args: ${config.workdir} ${config.subcommand}
+    config:
+      - type: String
+        name: workdir
+        description: 'Working directory containing terraform files.'
+        required: true
+      - type: Select
+        name: subcommand
+        description: 'The workspace subcommand.'
+        required: true
+        values: 'list, select, new, delete'
+      - type: String
+        name: name
+        description: 'the workspace identifier.'
+        required: false        
+      - type: String
+        name: state
+        description: 'Path to a state file to initialize the state of this environment.'
+        required: false
+      - type: Boolean
+        name: force
+        description: 'For delete subcommand, delete the workspace even if its state is not empty.'
+  - name: terraform-state-step
+    service: WorkflowStep
+    title: 'terraform / state'
+    description: 'The terraform state command is used for advanced state management.'
+    plugin-type: script
+    script-interpreter: /usr/bin/env bash
+    script-file: state
+    script-args: ${config.workdir} ${config.subcommand} ${config.addresses}
+    config:
+      - type: String
+        name: workdir
+        description: 'Working directory containing terraform files.'
+        required: true
+      - type: Select
+        name: subcommand
+        description: 'The state subcommand.'
+        required: true
+        values: 'list'
+      - type: String
+        name: addresses
+        description: 'the resource addresses.'
+        required: false
+      - type: String
+        name: state
+        description: 'Path to a state file (if not remote).'
+        required: false
