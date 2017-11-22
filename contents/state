@@ -22,10 +22,12 @@ terraform_args+=("${addresses[@]}")
 cd "$working_directory" || exit 2
 terraform "${terraform_args[@]}"
 
+if [[ "${TERRAFORM_DRYRUN:-}" == true ]]
+then
 # Simulated output
 cat <<'EOF'
 module.test_instance.aws_instance.windows_server[0]
 module.test_instance.aws_instance.windows_server[1]
 EOF
-
+fi
 exit $?

@@ -13,8 +13,7 @@ fi
 # Import the terraform wrapper function
 . "$(dirname "$0")/terraform"
 
-terraform_args+=(init -input=false)
-
+terraform_args+=(init -input=false); # always set this to false for automation
 
 [[ -n "${RD_CONFIG_LOCK:-}" ]] && terraform_args+=(-lock=$RD_CONFIG_LOCK)
 [[ -n "${RD_CONFIG_LOCK_TIMEOUT:-}" ]] && terraform_args+=(-lock-timeout=$RD_CONFIG_LOCK_TIMEOUT)
@@ -24,9 +23,11 @@ cd "$working_directory" || exit 2
 
 terraform "${terraform_args[@]}"
 
+if [[ "${TERRAFORM_DRYRUN:-}" == true ]]
+then
 # Simulated output
 cat <<'EOF'
 Terraform has been successfully initialized!"
 EOF
-
+fi
 exit $?

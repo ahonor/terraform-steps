@@ -20,8 +20,10 @@ terraform_args+=(workspace "$subcommand")
 cd "$working_directory" || exit 2
 terraform "${terraform_args[@]}"
 
+if [[ "${TERRAFORM_DRYRUN:-}" == true ]]
+then
 # Simulated output
 cat <<'EOF'
 EOF
-
+fi
 exit $?
