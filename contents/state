@@ -11,14 +11,10 @@ if [[ ! -d "$working_directory" ]]; then
 	exit 2
 fi
 
-terraform() {
-	echo >&2 "DEBUG: running: 'terraform $*' ..."
-	#command terraform "$@"
-}
+# Import the terraform wrapper function
+. "$(dirname "$0")/terraform"
 
 terraform_args+=(state "$subcommand")
-
-
 [[ -n "${RD_CONFIG_STATE:-}" ]] && terraform_args+=(-state "$RD_CONFIG_STATE")
 
 terraform_args+=("${addresses[@]}")

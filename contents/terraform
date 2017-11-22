@@ -1,0 +1,10 @@
+
+# Unset or set to false to actually run terraform
+: ${TERRAFORM_DRYRUN:=true}
+terraform() {
+	if [[ "${TERRAFORM_DRYRUN:-}" == true ]]; then
+		echo >&2 "DRYRUN: 'terraform $*' ..."
+	else
+		command terraform "$@"
+	fi
+}

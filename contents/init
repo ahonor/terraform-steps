@@ -10,10 +10,8 @@ if [[ ! -d "$working_directory" ]]; then
 fi
 
 
-terraform() {
-	echo >&2 "DEBUG: running 'terraform $*' ..."
-	#command terraform "$@"
-}
+# Import the terraform wrapper function
+. "$(dirname "$0")/terraform"
 
 terraform_args+=(init -input=false)
 
